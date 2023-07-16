@@ -1,0 +1,51 @@
+<!-- One way to geta value from an HTML element is with a "template reference" -->
+<!-- <textarea rows="6" [value]="newPost" #postInput></textarea>
+<hr>
+<button (click)="onAddPost(postInput)">Save Post</button>
+<p>{{newPost}}</p> -->
+
+<!-- Another way to get the value of an HTML element is with "Two Way Binding"
+using the directive ngModel and works with FormsModule -->
+<mat-card>
+    <form (submit)="onAddPost(postForm)" #postForm="ngForm">
+        <mat-card-content>
+    
+            <mat-form-field>
+                <input 
+                    type="text" 
+                    name="title"
+                    required
+                    minlength="3"
+                    placeholder="Post title"
+                    matInput 
+                    ngModel
+                    #title="ngModel"
+                    >
+                <mat-error *ngIf="title.invalid">Please provide a title.</mat-error>
+            </mat-form-field>
+    
+            <mat-form-field>
+                <textarea 
+                    name="content"
+                    rows="4" 
+                    required
+                    placeholder="Post Content"
+                    matInput 
+                    ngModel
+                    #content="ngModel"
+                    >
+                </textarea>
+                <mat-error *ngIf="content.invalid">Please provide a content.</mat-error>
+            </mat-form-field>
+    
+            <button 
+                mat-raised-button
+                color="accent"
+                type="submit" 
+                >
+                Save Post
+            </button>
+            
+        </mat-card-content>
+    </form>
+</mat-card>
