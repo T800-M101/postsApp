@@ -7,7 +7,8 @@
 <!-- Another way to get the value of an HTML element is with "Two Way Binding"
 using the directive ngModel and works with FormsModule -->
 <mat-card>
-    <form (submit)="onAddPost(postForm)" #postForm="ngForm">
+    <mat-spinner *ngIf="isLoading"></mat-spinner>
+    <form (submit)="onSavePost(postForm)" #postForm="ngForm" *ngIf="!isLoading">
         <mat-card-content>
     
             <mat-form-field>
@@ -18,7 +19,7 @@ using the directive ngModel and works with FormsModule -->
                     minlength="3"
                     placeholder="Post title"
                     matInput 
-                    ngModel
+                    [ngModel]="post.title"
                     #title="ngModel"
                     >
                 <mat-error *ngIf="title.invalid">Please provide a title.</mat-error>
@@ -31,7 +32,7 @@ using the directive ngModel and works with FormsModule -->
                     required
                     placeholder="Post Content"
                     matInput 
-                    ngModel
+                    [ngModel]="post.content"
                     #content="ngModel"
                     >
                 </textarea>
