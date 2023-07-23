@@ -12,9 +12,8 @@ import { AuthService } from 'src/app/auth/auth.service';
 })
 export class PostListComponent implements OnInit, OnDestroy {
 
-  constructor(private postsService: PostsService, private authService: AuthService){}
   @ViewChild(MatPaginator, { static: false }) paginator!: MatPaginator;
-  
+
   posts!:Post[];
   isLoading = false;
   totalPosts = 0;
@@ -25,16 +24,21 @@ export class PostListComponent implements OnInit, OnDestroy {
   counter = 0;
   morePosts=true;
   userIsAuthenticated = false;
- 
+  userId!: string | undefined;
+  
   private postSubs: Subscription = new Subscription;
   private authListenerSubs!: Subscription;
+
+  constructor(private postsService: PostsService, private authService: AuthService){}
   
   ngOnInit(): void {
 
     this.authListenerSubs = this.authService.getAuthStatusListener().subscribe(isAuthenticated => {
       this.userIsAuthenticated = isAuthenticated;
+      this.userId = this.authService.getUserId();
     });
-    
+
+    this.userId = this.authService.getUserId();
     this.isLoading = true;
     this.postsService.getPosts(this.postsPerPage, this.currentPage);
     this.postSubs = this.postsService.getPostsUpdateListener()

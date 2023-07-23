@@ -40,7 +40,8 @@ router.post(
     const post = new Post({
         title: req.body.title,
         content: req.body.content,
-        imagePath : url + '/images/' + req.file.filename
+        imagePath : url + '/images/' + req.file.filename,
+        creator: req.userData.userId
     });
     post.save()
     .then( createdPost => {
@@ -67,7 +68,6 @@ router.get('', ( req, res, next ) => {
 
     postQuery
     .then( documents => {
-        console.log(documents)
         fetchedPosts = documents;
         return Post.count();
     }).then(count => {
@@ -98,7 +98,7 @@ router.get('/:id', ( req, res, next ) => {
     });
 });
 
-router.put('/:id', multer({storage: storage}).single("image"), ( req, res, next ) => {
+router.put('/:id', checkAuth, multer({storage: storage}).single("image"), ( req, res, next ) => {
     let imagePath = req.body.imagePath;
     if (req.file) {
        const url = req.protocol + "://" + req.get("host");
@@ -108,25 +108,39 @@ router.put('/:id', multer({storage: storage}).single("image"), ( req, res, next 
         _id: req.body.id,
         title: req.body.title,
         content: req.body.content,
-        imagePath: imagePath
+        imagePath: imagePath,
+        creator: req.userData.userId
     });
-
-    Post.updateOne({_id: req.params.id }, post )
+     
+    Post.updateOne({_id: req.params.id, creator: req.userData.userId }, post )
     .then( result => {
-        res.status(200).json({
-            message: 'Update successfull!'
-        });
+        if(result.modifiedCount > 0) {
+            res.status(200).json({
+                message: 'Update successfull!'
+            });
+        }else {
+            res.status(401).json({
+                message: 'Not authorized!'
+            });
+        }
     });
 });
 
 router.delete('/:id', checkAuth, ( req, res, next ) => {
     Post.deleteOne({
-        _id: req.params.id
+        _id: req.params.id,
+        creator: req.userData.userId
     })
     .then( result => {
-        res.status(200).json({
-            message: 'The post with id ' + req.params.id + ' was deleted!'
-        });
+        if(result.deletedCount > 0) {
+            res.status(200).json({
+                message: 'Deletion successfull!'
+            });
+        }else {
+            res.status(401).json({
+                message: 'Not authorized!'
+            });
+        }
     });
 });
 

@@ -1,5 +1,5 @@
 <mat-card>
-    <form (submit)="onSignup(signupForm)" #signupForm="ngForm" *ngIf="!isLoading">
+    <form (submit)="onSignup(signupForm)" #signupForm="ngForm">
         <mat-card-content>
     
             <mat-form-field>
@@ -35,11 +35,11 @@
                 mat-raised-button
                 color="accent"
                 type="submit"
-                *ngIf="isLoading" 
+                
             >
                 Signup
             </button>
-            <mat-spinner *ngIf="!isLoading"></mat-spinner>
+            
             
         </mat-card-content>
     </form>

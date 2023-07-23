@@ -17,7 +17,8 @@ export class PostCreateComponent implements OnInit {
         id: '',
         title: '',
         content: '',
-        imagePath: ''
+        imagePath: '',
+        creator: ''
     };
     isLoading = false;
     form!: FormGroup;
@@ -51,7 +52,8 @@ export class PostCreateComponent implements OnInit {
                         id: postData.id, 
                         title: postData.title, 
                         content: postData.content,
-                        imagePath: postData.imagePath
+                        imagePath: postData.imagePath,
+                        creator: postData.creator
                     };
                     this.form.setValue({
                         title: this.post.title,
