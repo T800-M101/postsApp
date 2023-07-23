@@ -8,15 +8,15 @@ import { Router } from "@angular/router";
 @Injectable({providedIn: 'root'})
 export class PostsService {
     
-    constructor(private http: HttpClient,private router: Router ){}
+    constructor(private http: HttpClient,private router: Router){}
 
     private posts: Post[] = [];
     private postUpdated = new Subject<{posts: Post[], postCount: number}>();
 
     getPosts(postsPerPage: number, currentPage: number) {
         const queryParams = `?pagesize=${postsPerPage}&page=${currentPage}`;
-       this.http.get<{ message: string, posts: any, maxPosts: number}>('http://localhost:3000/api/posts' + queryParams)
-       .pipe( map( ( postData ) => {
+        this.http.get<{ message: string, posts: any, maxPosts: number}>('http://localhost:3000/api/posts' + queryParams)
+        .pipe( map( ( postData ) => {
              return {
                 posts:postData.posts.map( ( post: any ) => {
                 return {
@@ -28,10 +28,10 @@ export class PostsService {
              }), maxPosts: postData.maxPosts
             };
        }))
-       .subscribe( transforedPostData=> {
+        .subscribe( transforedPostData=> {
            this.posts = transforedPostData.posts;
            this.postUpdated.next({posts: [...this.posts], postCount: transforedPostData.maxPosts});
-       });
+        });
     }
 
     getPostsUpdateListener() {
