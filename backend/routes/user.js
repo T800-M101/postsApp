@@ -1,5 +1,5 @@
 const express = require('express');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 const User = require('../models/user');
@@ -20,12 +20,12 @@ router.post("/signup", (req, res, next) => {
         .then(result => {
             res.status(201).json({
                 message:'user created!',
-                result:result
+                result
             });
         })
         .catch(error => {
             res.status(500).json({
-                error:error
+                message:'email must be unique.'
             });
         });
     });
@@ -33,38 +33,41 @@ router.post("/signup", (req, res, next) => {
 });
 
 router.post("/login", (req, res, next) => {
-    User.findOne({email: req.body.email})
-    .then(user => {
-        if(!user) {
-            return res.status(401).json({
-                message: 'Auth failed!'
-            });
-        }
-        return bcrypt.compare(req.body.password, user.password)
-        .then(result => {
-            if(!result) {
-                return res.status(401).json({
-                    message: 'Auth failed!'
+
+    User.findOne({ email: req.body.email })
+        .then(response => {
+            bcrypt.compare(req.body.password, response.password)
+                .then(response => {
+                    if (response) {
+                        const token = jwt.sign(
+                            { email: user.email, userId: user._id },
+                            process.env.JWT_KEY,
+                            { expiresIn: '1h' }
+                        );
+                        res.status(200).json({
+                            token: token,
+                            expiresIn: 3600,
+                            userId: user._id
+                        });
+                    } else {
+                        res.status(500).json({
+                            message: 'Invalid authentication credentials!'
+                        });
+                    }
                 });
-            }
-            const token = jwt.sign(
-                    { email: user.email, userId: user._id}, 
-                    process.env.JWT_KEY, 
-                    { expiresIn: '1h' }
-                );
-                res.status(200).json({
-                    token: token,
-                    expiresIn: 3600,
-                    userId: user._id
-                });
-            });
-        })
-        .catch(err => {
-            return res.status(401).json({
-                message: 'Auth failed!'
+
+        }).catch(error => {
+            res.status(400).json({
+                message: 'Invalid authentication credentials!'
             });
         });
-    });
+});
+
+   
+
+
+    
+
 
 
 module.exports = router;

@@ -3,6 +3,10 @@
         <a routerLink="/">My Messages</a>
     </span>
     <span class="spacer"></span>
+    <span *ngIf="userCreatedEmail">
+        <p>Welcome {{userCreatedEmail}}</p>
+    </span>
+    <span class="spacer"></span>
     <ul>
         <li>
             <a mat-button routerLink="/create" routerLinkActive="accent" *ngIf="userIsAuthenticated">New Post</a>
